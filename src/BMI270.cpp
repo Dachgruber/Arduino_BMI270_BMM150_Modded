@@ -116,7 +116,9 @@ int BoschSensorClass::readAcceleration(float& x, float& y, float& z) {
   return (ret == 0);
 }
 
-//CUSTOM MADE
+/*
+sets the offset value of the accel. Takes float[3] offset = {x,y,z}
+*/
 void BoschSensorClass::setAccelOffset(float offset[]) {
   accelOffset[0] = offset[0];
   accelOffset[1] = offset[1];
@@ -139,10 +141,30 @@ float BoschSensorClass::getAccelODR() {
   return (1 << sens_cfg.cfg.acc.odr) * 0.39;
 }
 
-//CUSTOM MADE
+/*
+sets the output data rate (ODR) of the accel to a specific setting. Possible settings are:
+
+SETTING |  ODR
+   0  --> 12.5Hz
+   1  -->   25Hz
+   2  -->   50Hz
+   3  -->   80Hz 
+   4  -->  100Hz
+
+every other setting results in ODR = 100Hz
+*/
 int BoschSensorClass::setAccelODR(int8_t setting) { 
-  uint8_t ODRList[12] = {BMI2_ACC_ODR_0_78HZ, BMI2_ACC_ODR_1_56HZ, BMI2_ACC_ODR_3_12HZ, BMI2_ACC_ODR_6_25HZ, BMI2_ACC_ODR_12_5HZ, BMI2_ACC_ODR_25HZ, BMI2_ACC_ODR_50HZ, BMI2_ACC_ODR_100HZ, BMI2_ACC_ODR_200HZ, BMI2_ACC_ODR_400HZ, BMI2_ACC_ODR_800HZ,BMI2_ACC_ODR_1600HZ};
+  //this is the complete list of possible settings. As some do not work properly, we define our own list
+  //uint8_t ODRList[12] = {BMI2_ACC_ODR_0_78HZ, BMI2_ACC_ODR_1_56HZ, BMI2_ACC_ODR_3_12HZ, BMI2_ACC_ODR_6_25HZ, BMI2_ACC_ODR_12_5HZ, BMI2_ACC_ODR_25HZ, BMI2_ACC_ODR_50HZ, BMI2_ACC_ODR_100HZ, BMI2_ACC_ODR_200HZ, BMI2_ACC_ODR_400HZ, BMI2_ACC_ODR_800HZ,BMI2_ACC_ODR_1600HZ};
   
+  //Note: ODR = 4 results in default 80Hz for some reason, not 1.56Hz as the name suggest (Bosch plz fix)
+  uint8_t ODRList[5] = {BMI2_ACC_ODR_12_5HZ, BMI2_ACC_ODR_25HZ, BMI2_ACC_ODR_50HZ, BMI2_ACC_ODR_1_56HZ, BMI2_ACC_ODR_100HZ};
+
+  // check if setting out of bounds, set to 4 if needed
+  if(setting < 0 || setting > 4 ){
+    setting = 4;
+  }
+
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_ACCEL;
   bmi2_get_sensor_config(&sens_cfg, 1, &bmi2);
