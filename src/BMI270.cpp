@@ -412,16 +412,12 @@ float BoschSensorClass::getMagnetODR() {
  *  1  -->      6Hz
  *  2  -->      8Hz
  *  3  -->     10Hz
- *  4  -->     15Hz
- *  5  -->     20Hz
- *  6  -->     25Hz
- *  7  -->     30Hz
  * 
  * every other value results in ODR = 10Hz
 */
 int BoschSensorClass::setMagnetODR(int8_t setting) {
 
-  uint8_t rateList[8] = {BMM150_DATA_RATE_02HZ, BMM150_DATA_RATE_06HZ, BMM150_DATA_RATE_08HZ, BMM150_DATA_RATE_10HZ, BMM150_DATA_RATE_15HZ, BMM150_DATA_RATE_20HZ, BMM150_DATA_RATE_25HZ, BMM150_DATA_RATE_30HZ};
+  uint8_t rateList[8] = {BMM150_DATA_RATE_02HZ, BMM150_DATA_RATE_06HZ, BMM150_DATA_RATE_08HZ, BMM150_DATA_RATE_10HZ};
 
   // check if setting out of bounds
   if(setting < 0 || setting > 3 ){
@@ -436,9 +432,8 @@ int BoschSensorClass::setMagnetODR(int8_t setting) {
   rslt = bmm150_set_sensor_settings(BMM150_SEL_DATA_RATE,&settings, &bmm1);
   if (rslt != BMM150_OK)
     return rslt;
-
-
 }
+
 
 int8_t BoschSensorClass::configure_sensor(struct bmi2_dev *dev)
 {

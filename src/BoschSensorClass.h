@@ -83,7 +83,7 @@ class BoschSensorClass {
     virtual int magneticFieldAvailable(); // Number of samples in the FIFO.
     virtual float getMagnetODR(); // Sampling rate of the sensor.
 
-    //virtual float getMagnetFS(); //CUSTOM MADE
+    //virtual float getMagnetFS(); not possible at the moment
     virtual int setMagnetODR(int8_t setting); //CUSTOM MADE
     //virtual int settMagnetFS(int8_t setting); //CUSTOM MADE
     //virtual void settMagnetOffset(float offset[]); //CUSTOM MADE
