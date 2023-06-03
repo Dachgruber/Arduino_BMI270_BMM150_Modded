@@ -194,10 +194,17 @@ int BoschSensorClass::setAccelODR(int8_t setting) {
  *  1  -->    4G
  *  2  -->    8G
  *  3  -->   16G
+ * 
+ * every other setting results in FS = 16G
 */
 int BoschSensorClass::setAccelFS(int8_t setting) { 
   uint8_t RangeList[4] = {BMI2_ACC_RANGE_2G, BMI2_ACC_RANGE_4G, BMI2_ACC_RANGE_8G, BMI2_ACC_RANGE_16G};
   
+  // check if setting out of bounds
+  if(setting < 0 || setting > 3 ){
+    setting = 3;
+  }
+
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_ACCEL;
   bmi2_get_sensor_config(&sens_cfg, 1, &bmi2);
@@ -291,8 +298,16 @@ float BoschSensorClass::getGyroODR() {
 * every other setting results in ODR = 100Hz
 */
 int BoschSensorClass::setGyroODR(int8_t setting) { 
-  uint8_t ODRList[8] = {BMI2_GYR_ODR_25HZ, BMI2_GYR_ODR_50HZ, BMI2_GYR_ODR_100HZ, BMI2_GYR_ODR_200HZ, BMI2_GYR_ODR_400HZ, BMI2_GYR_ODR_800HZ, BMI2_GYR_ODR_1600HZ, BMI2_GYR_ODR_3200HZ};
+  //this is the full list. Some settings do not work properly, so we use a reduced list:
+  //uint8_t ODRList[8] = {BMI2_GYR_ODR_25HZ, BMI2_GYR_ODR_50HZ, BMI2_GYR_ODR_100HZ, BMI2_GYR_ODR_200HZ, BMI2_GYR_ODR_400HZ, BMI2_GYR_ODR_800HZ, BMI2_GYR_ODR_1600HZ, BMI2_GYR_ODR_3200HZ};
   
+  uint8_t ODRList[8] = {BMI2_GYR_ODR_25HZ, BMI2_GYR_ODR_50HZ, BMI2_GYR_ODR_100HZ};
+
+  // check if setting out of bounds
+  if(setting < 0 || setting > 2 ){
+    setting = 2;
+  }
+
   //TODO: outOfBoundsCheck
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_GYRO;
@@ -314,10 +329,17 @@ int BoschSensorClass::setGyroODR(int8_t setting) {
  *  2  -->    500dps
  *  3  -->   1000dps
  *  4  -->   2000dps
+ * 
+ * every other value results in FS = 125dps
 */
 int BoschSensorClass::setGyroFS(int8_t setting) { 
   uint8_t RangeList[5] = {BMI2_GYR_RANGE_125, BMI2_GYR_RANGE_250, BMI2_GYR_RANGE_500, BMI2_GYR_RANGE_1000, BMI2_GYR_RANGE_2000};
   
+  // check if setting out of bounds
+  if(setting < 0 || setting > 4 ){
+    setting = 0;
+  }
+
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_GYRO;
   bmi2_get_sensor_config(&sens_cfg, 1, &bmi2);
