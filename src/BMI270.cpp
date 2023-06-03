@@ -95,6 +95,10 @@ void BoschSensorClass::oneShotMode() {
 #define INT16_to_G   (8192.0f)
 
 // Accelerometer //CUSTOM MODIFIED -> INT16_to_G unused
+/**
+ * reads the x,y,z values from the acceleration sensor. Accounts for 
+ * custom offsets and changes to the measuring range.
+*/
 int BoschSensorClass::readAcceleration(float& x, float& y, float& z) {
   float GValues[4] = {2.0f, 4.0f, 8.0f, 16.0f};
   struct bmi2_sens_config sens_cfg;
@@ -116,15 +120,17 @@ int BoschSensorClass::readAcceleration(float& x, float& y, float& z) {
   return (ret == 0);
 }
 
-/*
-sets the offset value of the accel. Takes float[3] offset = {x,y,z}
+/**
+* Sets the offset value of the accel. Takes float[3] offset = {x,y,z}
 */
 void BoschSensorClass::setAccelOffset(float offset[]) {
   accelOffset[0] = offset[0];
   accelOffset[1] = offset[1];
   accelOffset[2] = offset[2];
 }
-
+/**
+ * Checks the status of the acceleration sensor. Returns 0/ false, if sensor is not ready
+*/
 int BoschSensorClass::accelerationAvailable() {
   uint16_t status;
   bmi2_get_int_status(&status, &bmi2);
@@ -134,6 +140,10 @@ int BoschSensorClass::accelerationAvailable() {
   return ret;
 }
 
+/**
+ * Checks the ODR setting of the acceleration sensor. Returns
+ * the float value of the ODR in Hz (12.5 for 12.5Hz etc)
+*/
 float BoschSensorClass::getAccelODR() {
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_ACCEL;
@@ -142,15 +152,15 @@ float BoschSensorClass::getAccelODR() {
 }
 
 /*
-sets the output data rate (ODR) of the accel to a specific setting. Possible settings are:
-
-SETTING |  ODR
-   0  --> 12.5Hz
-   1  -->   25Hz
-   2  -->   50Hz
-   3  -->  100Hz
-
-every other setting results in ODR = 100Hz
+* Sets the output data rate (ODR) of the accel to a specific setting. Possible settings are:
+* 
+* SETTING |  ODR
+*   0  --> 12.5Hz
+*   1  -->   25Hz
+*   2  -->   50Hz
+*   3  -->  100Hz
+*
+* every other setting results in ODR = 100Hz
 */
 int BoschSensorClass::setAccelODR(int8_t setting) { 
   //this is the complete list of possible settings. As some do not work properly, we define our own list
@@ -159,7 +169,8 @@ int BoschSensorClass::setAccelODR(int8_t setting) {
 
   uint8_t ODRList[4] = {BMI2_ACC_ODR_12_5HZ, BMI2_ACC_ODR_25HZ, BMI2_ACC_ODR_50HZ, BMI2_ACC_ODR_100HZ};
 
-  // check if setting out of bounds, set to 4 if needed
+  // check if setting out of bounds, set to 4 if needed 
+  // TODO  set to 3
   if(setting < 0 || setting > 4 ){
     setting = 4;
   }
@@ -175,7 +186,15 @@ int BoschSensorClass::setAccelODR(int8_t setting) {
     return rslt;
 }
 
-//CUSTOM MADE
+/**
+ * Sets the full scale (measuring range) for the acceleration sensor. Possible values are:
+ * 
+ * SETTING |  FS 
+ *  0  -->    2G
+ *  1  -->    4G
+ *  2  -->    8G
+ *  3  -->   16G
+*/
 int BoschSensorClass::setAccelFS(int8_t setting) { 
   uint8_t RangeList[4] = {BMI2_ACC_RANGE_2G, BMI2_ACC_RANGE_4G, BMI2_ACC_RANGE_8G, BMI2_ACC_RANGE_16G};
   
@@ -189,7 +208,10 @@ int BoschSensorClass::setAccelFS(int8_t setting) {
   if (rslt != BMI2_OK)
     return rslt;
 }
-
+/**
+ * Gets the effective full scale (not the integer FS setting) for the acceleration sensor. Returns
+ * the range as a float (2 for 2G etc)
+*/
 float BoschSensorClass::getAccelFS() {
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_GYRO;
@@ -201,6 +223,10 @@ float BoschSensorClass::getAccelFS() {
 #define INT16_to_DPS   (16.384f)
 
 // Gyroscope //CUSTOM MODIFIED -> INT16_to_DPS unused
+/**
+ * Reads the x,y,z values of the gyroscope sensor. Accounts for custom
+ * offsets and changes to the measuring range
+*/
 int BoschSensorClass::readGyroscope(float& x, float& y, float& z) {
   float DPSValues[5] = {125.0f, 250.0f, 500.0f, 1000.0f, 2000.0f};
   struct bmi2_sens_config sens_cfg;
@@ -222,13 +248,18 @@ int BoschSensorClass::readGyroscope(float& x, float& y, float& z) {
   return (ret == 0);
 }
 
-//CUSTOM MADE
+/**
+ * Sets the offset value of the gyroscope. Takes float[3] offset = {x,y,z}
+*/
 void BoschSensorClass::setGyroOffset(float offset[]) {
   gyroOffset[0] = offset[0];
   gyroOffset[1] = offset[1];
   gyroOffset[2] = offset[2];
 }
 
+/**
+ * checks the status of the gyroscope. Returns 0/false, if sensor is not ready
+*/
 int BoschSensorClass::gyroscopeAvailable() {
   uint16_t status;
   bmi2_get_int_status(&status, &bmi2);
@@ -238,7 +269,10 @@ int BoschSensorClass::gyroscopeAvailable() {
   return ret;
 }
 
-//CUSTOM RENAMED
+/**
+ * Checks the ODR setting of the gyroscope sensor. Returns the float value
+ * of the ODR in Hz (12.5 for 12.5Hz etc)
+*/
 float BoschSensorClass::getGyroODR() {
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_GYRO;
@@ -246,10 +280,20 @@ float BoschSensorClass::getGyroODR() {
   return (1 << sens_cfg.cfg.gyr.odr) * 0.39;
 }
 
-//CUSTOM MADE
+/*
+* Sets the output data rate (ODR) of the gyro to a specific setting. Possible settings are:
+* 
+* SETTING |  ODR
+*   0  -->  25Hz
+*   1  -->  50Hz
+*   2  -->  100Hz
+*
+* every other setting results in ODR = 100Hz
+*/
 int BoschSensorClass::setGyroODR(int8_t setting) { 
   uint8_t ODRList[8] = {BMI2_GYR_ODR_25HZ, BMI2_GYR_ODR_50HZ, BMI2_GYR_ODR_100HZ, BMI2_GYR_ODR_200HZ, BMI2_GYR_ODR_400HZ, BMI2_GYR_ODR_800HZ, BMI2_GYR_ODR_1600HZ, BMI2_GYR_ODR_3200HZ};
   
+  //TODO: outOfBoundsCheck
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_GYRO;
   bmi2_get_sensor_config(&sens_cfg, 1, &bmi2);
@@ -261,7 +305,16 @@ int BoschSensorClass::setGyroODR(int8_t setting) {
     return rslt;
 }
 
-//CUSTOM MADE
+/**
+ * Sets the full scale (measuring range) for the gyroscope sensor in degrees per second (dps). Possible values are:
+ * 
+ * SETTING |  FS 
+ *  0  -->    125dps
+ *  1  -->    250dps
+ *  2  -->    500dps
+ *  3  -->   1000dps
+ *  4  -->   2000dps
+*/
 int BoschSensorClass::setGyroFS(int8_t setting) { 
   uint8_t RangeList[5] = {BMI2_GYR_RANGE_125, BMI2_GYR_RANGE_250, BMI2_GYR_RANGE_500, BMI2_GYR_RANGE_1000, BMI2_GYR_RANGE_2000};
   
@@ -276,7 +329,10 @@ int BoschSensorClass::setGyroFS(int8_t setting) {
     return rslt;
 }
 
-//CUSTOM RENAMED
+/**
+ * Gets the effective full scale (not the integer FS setting) for the gyroscope sensor. Returns
+ * the range as a float (125 for 125dps etc)
+*/
 float BoschSensorClass::getGyroFS() {
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_GYRO;
