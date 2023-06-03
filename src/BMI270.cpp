@@ -408,9 +408,9 @@ float BoschSensorClass::getMagnetODR() {
  * Sets the output data rate for the magnetometer sensor in Hz. Possible values are:
  * 
  * SETTING |  ODR 
- *  0  -->    0.2Hz
- *  1  -->    0.6Hz
- *  2  -->    0.8Hz
+ *  0  -->      2Hz
+ *  1  -->      6Hz
+ *  2  -->      8Hz
  *  3  -->     10Hz
  *  4  -->     15Hz
  *  5  -->     20Hz
