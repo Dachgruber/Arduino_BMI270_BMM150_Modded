@@ -171,8 +171,8 @@ int BoschSensorClass::setAccelODR(int8_t setting) {
 
   // check if setting out of bounds, set to 4 if needed 
   // TODO  set to 3
-  if(setting < 0 || setting > 4 ){
-    setting = 4;
+  if(setting < 0 || setting > 3 ){
+    setting = 3;
   }
 
   struct bmi2_sens_config sens_cfg;
