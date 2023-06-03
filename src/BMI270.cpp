@@ -308,7 +308,6 @@ int BoschSensorClass::setGyroODR(int8_t setting) {
     setting = 2;
   }
 
-  //TODO: outOfBoundsCheck
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_GYRO;
   bmi2_get_sensor_config(&sens_cfg, 1, &bmi2);
@@ -381,7 +380,7 @@ int BoschSensorClass::magneticFieldAvailable() {
   return bmm1.int_status & BMM150_INT_ASSERTED_DRDY;
 }
 
-float BoschSensorClass::magneticFieldSampleRate() {
+float BoschSensorClass::getMagnetODR() {
   struct bmm150_settings settings;
   bmm150_get_sensor_settings(&settings, &bmm1);
   switch (settings.data_rate) {
@@ -403,6 +402,42 @@ float BoschSensorClass::magneticFieldSampleRate() {
       return 30;
   }
   return 0;
+}
+
+/**
+ * Sets the output data rate for the magnetometer sensor in Hz. Possible values are:
+ * 
+ * SETTING |  ODR 
+ *  0  -->    0.2Hz
+ *  1  -->    0.6Hz
+ *  2  -->    0.8Hz
+ *  3  -->     10Hz
+ *  4  -->     15Hz
+ *  5  -->     20Hz
+ *  6  -->     25Hz
+ *  7  -->     30Hz
+ * 
+ * every other value results in ODR = 10Hz
+*/
+int BoschSensorClass::setMagnetODR(int8_t setting) {
+
+  uint8_t rateList[8] = {BMM150_DATA_RATE_02HZ, BMM150_DATA_RATE_06HZ, BMM150_DATA_RATE_08HZ, BMM150_DATA_RATE_10HZ, BMM150_DATA_RATE_15HZ, BMM150_DATA_RATE_20HZ, BMM150_DATA_RATE_25HZ, BMM150_DATA_RATE_30HZ};
+
+  // check if setting out of bounds
+  if(setting < 0 || setting > 3 ){
+    setting = 3;
+  }
+
+  struct bmm150_settings settings;
+  bmm150_get_sensor_settings(&settings, &bmm1);
+
+  settings.data_rate = rateList[setting];
+  int8_t rslt;
+  rslt = bmm150_set_sensor_settings(BMM150_SEL_DATA_RATE,&settings, &bmm1);
+  if (rslt != BMM150_OK)
+    return rslt;
+
+
 }
 
 int8_t BoschSensorClass::configure_sensor(struct bmi2_dev *dev)

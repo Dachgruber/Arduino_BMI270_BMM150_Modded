@@ -78,9 +78,15 @@ class BoschSensorClass {
     virtual void setGyroOffset(float offset[]); //CUSTOM MADE
 
     // Magnetometer
+    float magnetOffset[3] = {0,0,0}; 
     virtual int readMagneticField(float& x, float& y, float& z); // Results are in uT (micro Tesla).
     virtual int magneticFieldAvailable(); // Number of samples in the FIFO.
-    virtual float magneticFieldSampleRate(); // Sampling rate of the sensor.
+    virtual float getMagnetODR(); // Sampling rate of the sensor.
+
+    //virtual float getMagnetFS(); //CUSTOM MADE
+    virtual int setMagnetODR(int8_t setting); //CUSTOM MADE
+    //virtual int settMagnetFS(int8_t setting); //CUSTOM MADE
+    //virtual void settMagnetOffset(float offset[]); //CUSTOM MADE
 
 
     //float getTemperature();
