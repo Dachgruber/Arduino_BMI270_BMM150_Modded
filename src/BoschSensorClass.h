@@ -65,7 +65,7 @@ class BoschSensorClass {
     virtual int setAccelODR(int8_t setting); //CUSTOM MADE
     virtual int setAccelFS(int8_t setting); //CUSTOM MADE
     virtual void setAccelOffset(float offset[]); //CUSTOM MADE
-    virtual float[3] getAccelOffset(); //CUSTOM MADE
+    virtual float* getAccelOffset(); //CUSTOM MADE
 
     // Gyroscope
     float gyroOffset[3] = {0,0,0};      // zero point offset correction factor for calibration
@@ -77,7 +77,7 @@ class BoschSensorClass {
     virtual int setGyroODR(int8_t setting); //CUSTOM MADE
     virtual int setGyroFS(int8_t setting); //CUSTOM MADE
     virtual void setGyroOffset(float offset[]); //CUSTOM MADE
-    virtual float[3] getGyroOffset(); //CUSTOM MADE
+    virtual float* getGyroOffset(); //CUSTOM MADE
     
 
     // Magnetometer
