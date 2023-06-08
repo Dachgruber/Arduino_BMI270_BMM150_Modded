@@ -235,7 +235,8 @@ float BoschSensorClass::getAccelFS() {
  * offsets and changes to the measuring range
 */
 int BoschSensorClass::readGyroscope(float& x, float& y, float& z) {
-  float DPSValues[5] = {125.0f, 250.0f, 500.0f, 1000.0f, 2000.0f};
+  //float DPSValues[5] = {125.0f, 250.0f, 500.0f, 1000.0f, 2000.0f};
+  float DPSValues[5] = {2000.0f, 1000.0f, 500.0f, 250.0f, 125.0f}; //inverse as the registers are inversed
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_GYRO;
   bmi2_get_sensor_config(&sens_cfg, 1, &bmi2);
@@ -355,10 +356,12 @@ int BoschSensorClass::setGyroFS(int8_t setting) {
  * the range as a float (125 for 125dps etc)
 */
 float BoschSensorClass::getGyroFS() {
+  float DPSValues[5] = {2000.0f, 1000.0f, 500.0f, 250.0f, 125.0f}; 
   struct bmi2_sens_config sens_cfg;
   sens_cfg.type = BMI2_GYRO;
   bmi2_get_sensor_config(&sens_cfg, 1, &bmi2);
-  return (1 << sens_cfg.cfg.gyr.range) * 0.39;
+  return DPSValues[sens_cfg.cfg.gyr.range];
+  //return (1 << sens_cfg.cfg.gyr.range) * 0.39;
 }
 
 // Magnetometer
