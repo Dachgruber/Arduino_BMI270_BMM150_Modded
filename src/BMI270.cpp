@@ -128,6 +128,14 @@ void BoschSensorClass::setAccelOffset(float offset[]) {
   accelOffset[1] = offset[1];
   accelOffset[2] = offset[2];
 }
+
+/**
+* returns the offset value of the accel.
+*/
+float* BoschSensorClass::getAccelOffset() {
+  return accelOffset;
+}
+
 /**
  * Checks the status of the acceleration sensor. Returns 0/ false, if sensor is not ready
 */
@@ -263,6 +271,10 @@ void BoschSensorClass::setGyroOffset(float offset[]) {
   gyroOffset[0] = offset[0];
   gyroOffset[1] = offset[1];
   gyroOffset[2] = offset[2];
+}
+
+float* BoschSensorClass::getGyroOffset(){
+  return gyroOffset;
 }
 
 /**
