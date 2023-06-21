@@ -121,12 +121,13 @@ int BoschSensorClass::readAcceleration(float& x, float& y, float& z) {
 }
 
 /**
-* Sets the offset value of the accel. Takes float[3] offset = {x,y,z}
+* Sets the offset value of the accel i m/s. Takes float[3] offset = {x,y,z}
+* divides through g as the sensor calcs in g values
 */
 void BoschSensorClass::setAccelOffset(float offset[]) {
-  accelOffset[0] = offset[0];
-  accelOffset[1] = offset[1];
-  accelOffset[2] = offset[2];
+  accelOffset[0] = offset[0] / 9.81;
+  accelOffset[1] = offset[1] / 9.81;
+  accelOffset[2] = offset[2] / 9.81;
 }
 
 /**
